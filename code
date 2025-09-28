@@ -1,0 +1,49 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+void findLCS(const string& s1, const string& s2) {
+    int n = s1.size();
+    int m = s2.size();
+    // Saving some space with the help of two rows, as we just need the previous row.
+    vector<vector<int>> dp(2, vector<int>(m + 1, 0));
+
+    int maxLen = 0;
+    int endIdx = 0;
+
+    for (int idx = 1; idx <= n; ++idx) {
+        // We shall take the current row (idx 2), and the last row ( (idx -1 )% 2).
+        int currRow = idx % 2;
+        int prevRow = (idx - 1) % 2;
+
+        for (int idj = 1; idj <= m; ++idj) {
+            if (s1[idx - 1] == s2[idj - 1]) {
+                dp[currRow][idj] = dp[prevRow][idj - 1] + 1;
+                if (dp[currRow][idj] > maxLen) {
+                    maxLen = dp[currRow][idj];
+                    endIdx = idx;
+                }
+            } else {
+                dp[currRow][idj] = 0;
+            }
+        }
+    }
+    
+    // Fast and simple method of displaying the output.
+    if (maxLen > 0) {
+        cout << "Longest common substring: " << s1.substr(endIdx - maxLen, maxLen)
+             << " (length: " << maxLen << ")\n";
+    }
+}
+
+int main() {
+    string str1 = "ABAB";
+    string str2 = "BABA";
+
+    cout << "Comparing " << str1 << " and " << str2 << "...\n";
+    findLCS(str1, str2);
+
+    return 0;
+}
